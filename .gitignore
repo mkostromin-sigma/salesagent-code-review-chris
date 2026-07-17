@@ -1,0 +1,9 @@
+# Review output
+.claude/reports/
+
+# OS cruft
+.DS_Store
+
+# Python bytecode (detectors)
+__pycache__/
+*.pyc
