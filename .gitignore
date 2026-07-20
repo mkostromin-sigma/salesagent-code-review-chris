@@ -1,5 +1,5 @@
-# Review output
-.claude/reports/
+# Review output (written under a salesagent workspace when reviewing)
+.cursor/reports/
 
 # OS cruft
 .DS_Store

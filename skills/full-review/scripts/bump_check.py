@@ -15,7 +15,8 @@ Everything else the detectors print (recovery divergences, forced codes, FIXME m
 STANDING count — compare it to your known baseline; a change is worth investigating, but it is
 not a per-run alarm (these are pre-existing, adjudicated items).
 
-Usage: uv run python .claude/rules/private/detectors/bump_check.py
+Usage: uv run python $HARNESS_ROOT/skills/full-review/scripts/bump_check.py
+  (run from the salesagent repo root so `uv` / `adcp` resolve correctly)
 Exit: 2 = a self-test failed · 1 = a snapshot is stale · 0 = self-tests pass and snapshots fresh.
 """
 from __future__ import annotations
@@ -24,11 +25,16 @@ import subprocess
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
+# Plugin root = .../skills/full-review/scripts → parents[2]
+HARNESS_ROOT = HERE.parents[2]
 
 # (name, needs_uv [imports adcp/src], scan_args). citation_freshness is harness-scoped here —
 # src + skills citations are a per-PR-diff concern, not a harness-freshness one.
 DETECTORS = [
-    ("citation_freshness", False, [".claude/agents", ".claude/rules/private"]),
+    ("citation_freshness", False, [
+        str(HARNESS_ROOT / "agents"),
+        str(HARNESS_ROOT / "skills" / "full-review" / "references"),
+    ]),
     ("recovery_audit", True, []),
     ("sdk_spec_drift", True, []),
     ("fixme_format", False, []),

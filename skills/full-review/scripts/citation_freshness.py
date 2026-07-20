@@ -95,8 +95,8 @@ def iter_files(root: Path):
     # A file root scans just that file (rglob on a file yields nothing — the old
     # single-file no-op). A dir root scans its tree, skipping SKIP_DIRS that appear
     # BELOW the root only: the skip is computed on the path RELATIVE to root, so
-    # invoking the scan from inside a `.claude/worktrees/agent-X/…` path (whose
-    # ABSOLUTE parts contain "worktrees") is no longer a silent no-op.
+    # invoking the scan from inside a worktree path (whose ABSOLUTE parts may
+    # contain "worktrees") is no longer a silent no-op.
     if root.is_file():
         if not _skipped_suffix(root):
             yield root
@@ -191,8 +191,14 @@ def main(argv: list[str]) -> int:
         return selftest()
     roots = [Path(a) for a in argv if not a.startswith("-")]
     if not roots:
-        roots = [Path("src"), Path(".claude/agents"), Path(".claude/rules/private"),
-                 Path(".claude/skills")]
+        # Default: salesagent src + target-repo Claude skills (if present) +
+        # harness agents/references when HARNESS_ROOT is discoverable next to this file.
+        harness_root = Path(__file__).resolve().parents[2]
+        roots = [Path("src"), Path(".claude/skills")]
+        for extra in (harness_root / "agents",
+                      harness_root / "skills" / "full-review" / "references"):
+            if extra.exists():
+                roots.append(extra)
     spec_pin, sdk_pin = derive_pins()
     if not spec_pin:
         print("ERROR: could not derive the spec pin (adcp import + guard/doc fallback both failed).",

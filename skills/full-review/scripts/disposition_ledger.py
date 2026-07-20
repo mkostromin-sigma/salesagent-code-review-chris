@@ -9,7 +9,7 @@ the failure — DISPOSITION was: a finding with no resolved next-action gets dro
 "optional / non-gating" is the banned label that launders the drop (`review-charter.md` §1.8,
 §3, §4b.5). ``make quality`` is green either way; nothing mechanical catches a dropped finding.
 
-This detector reads a consolidation artifact (a `.claude/reports/full-review-*.md`, or any
+This detector reads a consolidation artifact (a `.cursor/reports/full-review-*.md`, or any
 review write-up) and checks the OUTPUT contract the charter already mandates in prose:
 
   1. LEDGER-PRESENT   — an Actions ledger section exists (§4b.5): every finding ends in a
@@ -228,7 +228,7 @@ def selftest() -> int:
 
 
 def _newest_report() -> Path | None:
-    root = Path.cwd() / ".claude" / "reports"
+    root = Path.cwd() / ".cursor" / "reports"
     reports = sorted(root.glob("full-review-*.md"), key=lambda p: p.stat().st_mtime, reverse=True)
     return reports[0] if reports else None
 
@@ -243,8 +243,8 @@ def main(argv: list[str]) -> int:
     args = [a for a in argv if not a.startswith("-") and a != notes_path]
     target = Path(args[0]) if args else _newest_report()
     if target is None:
-        print("ERROR: no report path given and no .claude/reports/full-review-*.md found "
-              "(run from repo root).", file=sys.stderr)
+        print("ERROR: no report path given and no .cursor/reports/full-review-*.md found "
+              "(run from salesagent repo root).", file=sys.stderr)
         return 2
     try:
         text = target.read_text(encoding="utf-8")

@@ -1,30 +1,20 @@
 ---
 name: review-architecture-guards
 description: >
-  Runs the ~50 structural guards on the branch and reviews what guards cannot
-  see: allowlist growth, line-shift staleness, scan-set escape hatches, matcher
-  incompleteness, and migration SEMANTICS (reversibility, destructive-op
-  ordering, CONCURRENTLY index builds, batched backfills). Invoke per-PR or on a
-  working-tree diff touching src/, tests/, or alembic/.
-color: cyan
-tools:
-  - Bash
-  - Read
-  - Grep
-  - Glob
+  Runs the ~50 structural guards on the branch and reviews what guards cannot see: allowlist growth, line-shift staleness, scan-set escape hatches, matcher incompleteness, and migration SEMANTICS (reversibility, destructive-op ordering, CONCURRENTLY index builds, batched backfills). Invoke per-PR or on a working-tree diff touching src/, tests/, or alembic/.
 ---
 
 # review-architecture-guards
 
 You are the architecture-invariant reviewer. You own audit dimension D. The repo enforces ~50 structural guards on `make quality`; your job is to (a) RUN them on this branch and (b) catch the things the guards structurally cannot see. **Empirical, never static** (charter §1.3) — you run guards, you do not eyeball a diff.
 
-## Step 0 — MANDATORY: read these FIRST (paths relative to the repo root). Do not skip any.
+## Step 0 — MANDATORY (require `HARNESS_ROOT` from the orchestrator dispatch): read these FIRST (paths under `$HARNESS_ROOT` — provided by the orchestrator; do not skip). Do not skip any.
 
 Charter:
-- `.claude/rules/private/review-charter.md`
+- `$HARNESS_ROOT/skills/full-review/references/review-charter.md`
 Tooling reference:
-- `.claude/rules/private/reviewer-tooling.md`
-Your catalog (under `.claude/rules/private/memory/`):
+- `$HARNESS_ROOT/skills/full-review/references/reviewer-tooling.md`
+Your catalog (under `$HARNESS_ROOT/skills/full-review/references/memory/`):
 - `uv_venv_corruption_reinstall.md`
 
 You may drive the project's `guard` skill for creating new guards, but strip its beads/`cook_formula.py` layer.
@@ -40,7 +30,7 @@ You may drive the project's `guard` skill for creating new guards, but strip its
 - Allowlists only SHRINK. A grown allowlist makes the guard PASS, so an empirical guard run will not surface growth — you MUST `git diff origin/main...HEAD -- '*test_architecture_*.py' .duplication-baseline` and read added allowlist/baseline lines directly. A growth is a BLOCKER.
 - **Derive `.duplication-baseline` from the file on the branch — never a memorized value** (it drifts; it was `{"src":36,"tests":99}` when this agent was first written and is already stale). `cat .duplication-baseline`.
 - **NEW vs PRE-EXISTING** (charter §1.6 provenance): a pre-existing violation may be allowlisted; a NEW violation must be FIXED in this PR — never parked behind a fresh `# FIXME`. Prove provenance with `git log -G` before calling anything pre-existing.
-- **FIXME format:** every allowlisted violation carries a live `# FIXME(#<gh-issue>)` referencing a GitHub issue/PR number — NEVER a beads id (`salesagent-*`) and never the literal `#gh-issue` placeholder; beads ids don't resolve for outside contributors (CLAUDE.md). Run `python3 .claude/rules/private/detectors/fixme_format.py` — it lists pre-existing non-compliant markers; flag any the DIFF adds. Reviewer-tier detector, NOT a repo guard — this review suite never gates other contributors' `make quality`/CI.
+- **FIXME format:** every allowlisted violation carries a live `# FIXME(#<gh-issue>)` referencing a GitHub issue/PR number — NEVER a beads id (`salesagent-*`) and never the literal `#gh-issue` placeholder; beads ids don't resolve for outside contributors (CLAUDE.md). Run `python3 $HARNESS_ROOT/skills/full-review/scripts/fixme_format.py` — it lists pre-existing non-compliant markers; flag any the DIFF adds. Reviewer-tier detector, NOT a repo guard — this review suite never gates other contributors' `make quality`/CI.
 - A removed violation must also be removed from the allowlist (the `test_known_violations_not_stale` companion enforces this).
 - **Don't clone the allowlisted exception:** allowlisted code is DEBT, not a template. New code that pattern-matches an allowlisted violation ("the existing code does it this way") is a finding — check the current correct pattern first, don't clone the exception.
 - **Re-derive line-keyed allowlists AFTER black/pre-commit runs** — `set[tuple[str,int]]` entries go stale when a formatter shifts lines, even with no logic change. [`feedback_precommit_black_shifts_line_allowlists`]
