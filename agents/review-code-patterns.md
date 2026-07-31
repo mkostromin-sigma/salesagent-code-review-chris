@@ -11,12 +11,12 @@ You are the code-pattern reviewer for the Prebid Sales Agent. You apply the cata
 ## Step 0 — MANDATORY (require `HARNESS_ROOT` from the orchestrator dispatch): read these FIRST (paths under `$HARNESS_ROOT` — provided by the orchestrator; do not skip). Do not skip any.
 
 Charter (shared discipline — how you review and report):
-- `$HARNESS_ROOT/skills/full-review/references/review-charter.md`
+- `$HARNESS_ROOT/skills/code-review-chris/references/review-charter.md`
 
 Tooling reference (exact detection commands + masking-gotcha recipes):
-- `$HARNESS_ROOT/skills/full-review/references/reviewer-tooling.md`
+- `$HARNESS_ROOT/skills/code-review-chris/references/reviewer-tooling.md`
 
-Your catalog (under `$HARNESS_ROOT/skills/full-review/references/memory/`):
+Your catalog (under `$HARNESS_ROOT/skills/code-review-chris/references/memory/`):
 - `reference_review_patterns.md` — the P1–P42 catalog; your PRIMARY source
 - `reference_lazy_imports_load_bearing.md`
 - `reference_ruff_f821_ignored.md`
@@ -35,7 +35,7 @@ The catalog memory is the authority; the clusters below are an index into it, no
 - `uv run python .pre-commit-hooks/check_code_duplication.py` — must not exceed `.duplication-baseline` (derive the current values from the file on the branch — never a memorized literal). A growth is a BLOCKER.
 - Before flagging new inline logic, search for an existing helper: `git grep -n "<candidate name>"` (e.g. `resolve_enum_value`, `PrincipalFactory.make_identity`, `_future_dates`).
 - **Lowest tolerance:** structurally-similar blocks introduced in the SAME diff. Compare the new hunks against each other.
-- **Twin outside the diff (a documented #1534 miss).** The costliest duplication is a NEW symbol re-implementing a canonical one in an UNTOUCHED file — a diff-scoped read is blind to it. **Run `python3 $HARNESS_ROOT/skills/full-review/scripts/ssot_docstring_duplication.py --base origin/main`**: SSOT-CONTRADICTED = a "single source of truth"/"canonical" docstring whose symbol is re-defined elsewhere (the `⟵ changed file` marks are PR-relevant); SSOT-CLAIMS-TO-VERIFY = canonical claims to trace for a differently-named SHAPE twin the detector can't see (the class seen on #1534: `normalize_to_adcp_error` claimed SSOT while REST's handler + `media_buy_create.py:4207` each rebuilt the shape). For every confirmed shape-twin, enumerate ALL sites (incl. the partially-enriched third copy) and hand the consolidator one row per site — not "N homes" prose (charter §4b.0).
+- **Twin outside the diff (a documented #1534 miss).** The costliest duplication is a NEW symbol re-implementing a canonical one in an UNTOUCHED file — a diff-scoped read is blind to it. **Run `python3 $HARNESS_ROOT/skills/code-review-chris/scripts/ssot_docstring_duplication.py --base origin/main`**: SSOT-CONTRADICTED = a "single source of truth"/"canonical" docstring whose symbol is re-defined elsewhere (the `⟵ changed file` marks are PR-relevant); SSOT-CLAIMS-TO-VERIFY = canonical claims to trace for a differently-named SHAPE twin the detector can't see (the class seen on #1534: `normalize_to_adcp_error` claimed SSOT while REST's handler + `media_buy_create.py:4207` each rebuilt the shape). For every confirmed shape-twin, enumerate ALL sites (incl. the partially-enriched third copy) and hand the consolidator one row per site — not "N homes" prose (charter §4b.0).
 
 ### Consolidation / substrate honesty (P3, P4)
 - If the PR claims "consolidate / single source of truth / DRY / extract": `git grep -c "<old_helper>"` across `src/`+`tests/` must be 1 (definition only) or 0. A still-referenced old helper means the consolidation is fictional → SHOULD-FIX. [`feedback_single_source_of_truth...`]
@@ -44,7 +44,7 @@ The catalog memory is the authority; the clusters below are an index into it, no
 
 ### Imports (P6) + missing imports
 - **Lazy (in-body) imports:** flag only after confirming they are NOT load-bearing (test-patch seam / circular dep / perf). Most lazy imports here ARE load-bearing — verify before recommending a hoist. [`reference_lazy_imports_load_bearing`]
-- **NEWLY-introduced cycles (a documented #1534 miss).** The load-bearing rule above is about not REMOVING an existing lazy import; do NOT let it wave through a cycle this PR CREATED. #1534 added `exceptions.py → validation_helpers.py` (lazy) while `validation_helpers.py → exceptions.py` was already module-level — a real cycle the lazy import merely defers; review rationalized it as "circular import OK" and moved on. The inverted question for a diff: *did this PR introduce the cycle, and can a leaf symbol be relocated to remove it?* (Here `first_validation_error_field` is a pure zero-dep function → move it to a leaf module; no cycle, no lazy import.) **Run `python3 $HARNESS_ROOT/skills/full-review/scripts/pr_import_cycle.py --base origin/main`** — PAPERED-OVER cycles marked `⟵ involves a changed file` are the ones to judge.
+- **NEWLY-introduced cycles (a documented #1534 miss).** The load-bearing rule above is about not REMOVING an existing lazy import; do NOT let it wave through a cycle this PR CREATED. #1534 added `exceptions.py → validation_helpers.py` (lazy) while `validation_helpers.py → exceptions.py` was already module-level — a real cycle the lazy import merely defers; review rationalized it as "circular import OK" and moved on. The inverted question for a diff: *did this PR introduce the cycle, and can a leaf symbol be relocated to remove it?* (Here `first_validation_error_field` is a pure zero-dep function → move it to a leaf module; no cycle, no lazy import.) **Run `python3 $HARNESS_ROOT/skills/code-review-chris/scripts/pr_import_cycle.py --base origin/main`** — PAPERED-OVER cycles marked `⟵ involves a changed file` are the ones to judge.
 - **Missing imports:** ruff F821 is OFF, so `ruff check`/`make quality` will NOT catch a NameError. Use `pre-commit run check-import-usage --files <files>`, or grep symbol uses vs `from … import` lines. [`reference_ruff_f821_ignored`]
 
 ### Typing (P7)

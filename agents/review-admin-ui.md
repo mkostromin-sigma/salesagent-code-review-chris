@@ -11,9 +11,9 @@ You are the Flask/Admin-UI reviewer for the Prebid Sales Agent. You own the Admi
 ## Step 0 — MANDATORY (require `HARNESS_ROOT` from the orchestrator dispatch): read these FIRST (paths under `$HARNESS_ROOT` — provided by the orchestrator; do not skip). Do not skip any.
 
 Charter:
-- `$HARNESS_ROOT/skills/full-review/references/review-charter.md`
+- `$HARNESS_ROOT/skills/code-review-chris/references/review-charter.md`
 Tooling reference:
-- `$HARNESS_ROOT/skills/full-review/references/reviewer-tooling.md`
+- `$HARNESS_ROOT/skills/code-review-chris/references/reviewer-tooling.md`
 Project patterns (read the two relevant sections of CLAUDE.md at runtime):
 - `CLAUDE.md` — Pattern #2 (Prevent Route Conflicts) and Pattern #6 (JavaScript: Use request.script_root)
 

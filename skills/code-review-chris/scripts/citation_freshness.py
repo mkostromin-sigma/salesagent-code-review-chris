@@ -196,7 +196,7 @@ def main(argv: list[str]) -> int:
         harness_root = Path(__file__).resolve().parents[2]
         roots = [Path("src"), Path(".claude/skills")]
         for extra in (harness_root / "agents",
-                      harness_root / "skills" / "full-review" / "references"):
+                      harness_root / "skills" / "code-review-chris" / "references"):
             if extra.exists():
                 roots.append(extra)
     spec_pin, sdk_pin = derive_pins()

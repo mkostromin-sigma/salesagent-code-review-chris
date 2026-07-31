@@ -11,10 +11,10 @@ You are the test-quality reviewer for the Prebid Sales Agent (non-BDD; BDD belon
 ## Step 0 — MANDATORY (require `HARNESS_ROOT` from the orchestrator dispatch): read these FIRST (paths under `$HARNESS_ROOT` — provided by the orchestrator; do not skip). Do not skip any.
 
 Charter:
-- `$HARNESS_ROOT/skills/full-review/references/review-charter.md`
+- `$HARNESS_ROOT/skills/code-review-chris/references/review-charter.md`
 Tooling reference:
-- `$HARNESS_ROOT/skills/full-review/references/reviewer-tooling.md`
-Your catalog (under `$HARNESS_ROOT/skills/full-review/references/memory/`):
+- `$HARNESS_ROOT/skills/code-review-chris/references/reviewer-tooling.md`
+Your catalog (under `$HARNESS_ROOT/skills/code-review-chris/references/memory/`):
 - `reference_review_patterns.md` — P23/P24 + the test-quality patterns; your PRIMARY source
 - `agentdb_persistent_schema_masks_fresh_db_failures.md`
 - `reference_agentdb_port_mismatch.md`
@@ -61,7 +61,7 @@ Your catalog (under `$HARNESS_ROOT/skills/full-review/references/memory/`):
 
 ### Test craftsmanship — the test IS code, held to the src DRY/SSOT bar (documented misses on #1534)
 The suite reviews "does the test prove the code" but under-weighted the test's OWN quality; four test-craftsmanship items were raised independently on #1534 that every pass here missed. Run these:
-- **Helper re-implementation / test-DRY (the twin-outside-the-diff miss).** A NEW top-level `def` in a changed test file may re-implement a canonical helper that lives OUTSIDE the diff — a diff-scoped read cannot see the twin, which is exactly why `_call_mcp_tool_capturing_envelope` shipped duplicated despite a canonical copy whose docstring literally said "Single source of truth." **Run `python3 $HARNESS_ROOT/skills/full-review/scripts/ssot_docstring_duplication.py --base origin/main tests`** (the `⟵ changed file` marks are yours), AND for each new test helper `git grep -nE "def <name>\b" tests/` repo-wide before treating it as new. Fix: move it to `tests/helpers/` (next to `assert_envelope_shape`) and import in both. The R0801 baseline misses these (bodies differ in patches/identity, below the clone threshold).
+- **Helper re-implementation / test-DRY (the twin-outside-the-diff miss).** A NEW top-level `def` in a changed test file may re-implement a canonical helper that lives OUTSIDE the diff — a diff-scoped read cannot see the twin, which is exactly why `_call_mcp_tool_capturing_envelope` shipped duplicated despite a canonical copy whose docstring literally said "Single source of truth." **Run `python3 $HARNESS_ROOT/skills/code-review-chris/scripts/ssot_docstring_duplication.py --base origin/main tests`** (the `⟵ changed file` marks are yours), AND for each new test helper `git grep -nE "def <name>\b" tests/` repo-wide before treating it as new. Fix: move it to `tests/helpers/` (next to `assert_envelope_shape`) and import in both. The R0801 baseline misses these (bodies differ in patches/identity, below the clone threshold).
 - **Hollow mock assertion via `ANY`.** `record_error.assert_called_once_with("mcp", "tool", ANY, ...)` pins arity but nothing about the arg `ANY` covers — capture it and assert the type/code (`AdCPValidationError`, `VALIDATION_ERROR`). The repo `test_architecture_weak_mock_assertions.py` guard catches the `assert_called_once()`+`call_args` split, NOT `ANY`-hollowing — a matcher gap (`git grep -nE "assert_called(_once)?_with\(.*\bANY\b" <changed tests>`). Flag here; extending that guard is a separate repo contribution, not harness work.
 - **Parametrize-param rebinding.** A `@pytest.mark.parametrize` param rebound mid-test (`message = <wire value>` after the input `message` was consumed) makes a later assertion silently compare the wrong value — rename the local (`wire_message`). Grep changed parametrized tests for a reassignment of a param name.
 - **Vestigial alias.** `_ENVELOPE_WIRE = _ALL_WIRE` aliases away a distinction the PR just removed — use the original directly. Flag an alias whose two sides became identical in the diff.
