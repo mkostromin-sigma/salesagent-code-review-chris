@@ -9,7 +9,8 @@ the failure — DISPOSITION was: a finding with no resolved next-action gets dro
 "optional / non-gating" is the banned label that launders the drop (`review-charter.md` §1.8,
 §3, §4b.5). ``make quality`` is green either way; nothing mechanical catches a dropped finding.
 
-This detector reads a consolidation artifact (a `.cursor/reports/salesagent-code-review-chris-*.md`, or any
+This detector reads a consolidation artifact (a `~/.cursor/reviews/pr-*-salesagent-code-review-chris.md`,
+or any
 review write-up) and checks the OUTPUT contract the charter already mandates in prose:
 
   1. LEDGER-PRESENT   — an Actions ledger section exists (§4b.5): every finding ends in a
@@ -228,8 +229,16 @@ def selftest() -> int:
 
 
 def _newest_report() -> Path | None:
-    root = Path.cwd() / ".cursor" / "reports"
-    reports = sorted(root.glob("*salesagent-code-review-chris*.md"), key=lambda p: p.stat().st_mtime, reverse=True)
+    """Prefer personal reviews/ (stable names), then legacy workspace .cursor/reports/."""
+    home_reviews = Path.home() / ".cursor" / "reviews"
+    candidates: list[Path] = []
+    if home_reviews.is_dir():
+        candidates.extend(home_reviews.glob("pr-*-salesagent-code-review-chris.md"))
+        candidates.extend(home_reviews.glob("wt-salesagent-code-review-chris.md"))
+    legacy = Path.cwd() / ".cursor" / "reports"
+    if legacy.is_dir():
+        candidates.extend(legacy.glob("*salesagent-code-review-chris*.md"))
+    reports = sorted(candidates, key=lambda p: p.stat().st_mtime, reverse=True)
     return reports[0] if reports else None
 
 
@@ -243,8 +252,8 @@ def main(argv: list[str]) -> int:
     args = [a for a in argv if not a.startswith("-") and a != notes_path]
     target = Path(args[0]) if args else _newest_report()
     if target is None:
-        print("ERROR: no report path given and no .cursor/reports/salesagent-code-review-chris-*.md found "
-              "(run from salesagent repo root).", file=sys.stderr)
+        print("ERROR: no report path given and no ~/.cursor/reviews/pr-*-salesagent-code-review-chris.md "
+              "(or legacy .cursor/reports/) found.", file=sys.stderr)
         return 2
     try:
         text = target.read_text(encoding="utf-8")

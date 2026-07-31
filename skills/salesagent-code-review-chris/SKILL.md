@@ -135,16 +135,26 @@ Diff range / target: <...>   mergeStateStatus: <...> (PR mode)
 ## Drafted PR comment (PR mode) — fenced code blocks, technical-only, no issue/PR numbers in proposed code comments. Severity labels are EXACTLY `BLOCKER` / `SHOULD-FIX` / `NIT`. Do not post unless the user explicitly opted in.
 ```
 
-**Same structure as reference outputs in `.cursor/reports/salesagent-code-review-chris-*.md` when present** — the saved report AND any drafted PR comment follow this envelope in FULL. Read a recent `.cursor/reports/salesagent-code-review-chris-*.md` before writing the output and match its shape (none exist on a fresh install — then the envelope above is the complete spec).
+**Same structure as reference outputs in `~/.cursor/reviews/pr-*-salesagent-code-review-chris.md` when present** — the saved report AND any drafted PR comment follow this envelope in FULL. Read a recent chris review under `~/.cursor/reviews/` (root, not `done/`) before writing the output and match its shape (none exist on a fresh install — then the envelope above is the complete spec).
 
 Dimension H to fold in: PR-title prefix ∈ release-please changelog-sections; no `#\d{3,}`/"per PR" in added code comments; deletions under salesagent `.claude/notes/` are real repo changes, not scratch cleanup.
 
 Default to RESOLVING dispositions, not deferring them: apply FIX-NOW / FOLD-IN locally and file FOLLOW-UPs as you consolidate — an "optional" list is a harness failure (§4b.5). REMOTE actions stay gated: do NOT push, post the PR comment, or `gh pr create` until the user says go. On an external contributor's PR you cannot apply a FIX-NOW to their branch — so it becomes an exact decision handed to the author (do X), never an ambiguous "optional". The raw-state section uses no banned language (charter §1.8).
 
-**Ledger gate (T1 — run before you present the report OR draft any PR comment).** After writing `.cursor/reports/salesagent-code-review-chris-*.md` (create `.cursor/reports/` under the salesagent workspace if needed), run:
+**Artifact paths (HARD — personal Cursor layout):** write the consolidated report to a **stable** path (no timestamp; overwrite on re-review):
+
+| Mode | Path |
+|---|---|
+| PR | `~/.cursor/reviews/pr-<N>-salesagent-code-review-chris.md` |
+| working-tree | `~/.cursor/reviews/wt-salesagent-code-review-chris.md` (optional) |
+| Drafted PR comment | `~/.cursor/reviews/pr-<N>-drafted-comment.md` |
+
+Create `~/.cursor/reviews/` if missing. Never write into the salesagent git tree. After findings are fixed+pushed: `mv` → `~/.cursor/reviews/done/` (never `rm`).
+
+**Ledger gate (T1 — run before you present the report OR draft any PR comment).** After writing the review file, run:
 
 ```
-python3 $HARNESS_ROOT/skills/salesagent-code-review-chris/scripts/disposition_ledger.py .cursor/reports/<this-report>.md
+python3 $HARNESS_ROOT/skills/salesagent-code-review-chris/scripts/disposition_ledger.py ~/.cursor/reviews/pr-<N>-salesagent-code-review-chris.md
 ```
 
 Exit 1 means a finding carries no resolved disposition, the Actions ledger is absent, or an "optional / non-gating / nice-to-have" bucket launders a drop (the #1547 miss-class). Resolve every finding to done | folded-in | tracked(link) | won't-fix(reason) and re-run to exit 0 before the report ships. (It does NOT check whether findings were *unified* — that is Step 5.2 — so a clean exit means "nothing dropped," not "nothing missed.")

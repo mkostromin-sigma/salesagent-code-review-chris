@@ -75,7 +75,9 @@ Your final message:
 - **WON'T-FIX** — declined with a concrete reason (spec mandates it / false premise / accepted trade-off).
 Low severity is NOT a reason to defer. "Optional / non-blocking / nice-to-have / consider" are banned (§1.8): they name no action and, in an agentic world, drop cheap value. This preserves scope discipline — FOLLOW-UP is the valve (don't cram everything into one PR), but the work is CAPTURED, not dropped. Agents recommend the Disposition; the orchestrator RESOLVES it (§4b.5). [`feedback_principled_scope_expansion`]
 
-Reports written to disk (if any) → `.cursor/reports/<agent>-<YYYYMMDD_HHMM>.md` in the salesagent workspace (gitignored).
+Reports written to disk → `~/.cursor/reviews/pr-<N>-salesagent-code-review-chris.md`
+(stable name, overwrite on re-review; archive with `mv` → `~/.cursor/reviews/done/` after fix+push).
+Do **not** use timestamped names or the salesagent workspace `.cursor/reports/`.
 
 **Brevity (default — the reports are too long).** Findings only; no praise sections. Cap the body at the top ~5 findings by severity; list the rest as one-line `also:` entries. Each finding ≤6 lines (claim / evidence = one command or `path:line` / why / fix). Fold confirmations into a single `Confirmed:` line, not a "what the PR got right" block, unless the orchestrator asks. The orchestrator's consolidation is ONE maintainer-length review (~40–60 lines) — a tight narrative + an explicit mergeability verdict — never a concatenation of the agent reports.
 
