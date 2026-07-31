@@ -1,9 +1,16 @@
 {
-  "name": "salesagent-review-harness",
+  "name": "salesagent-code-review-chris",
   "version": "1.0.0",
   "description": "Multi-agent PR review harness for Prebid Sales Agent (Cursor)",
-  "author": { "name": "mkostromin-sigma" },
+  "author": {
+    "name": "mkostromin-sigma"
+  },
   "license": "Apache-2.0",
-  "keywords": ["salesagent", "review", "adcp", "prebid"],
-  "repository": "https://github.com/mkostromin-sigma/salesagent-review-harness"
+  "keywords": [
+    "salesagent",
+    "review",
+    "adcp",
+    "prebid"
+  ],
+  "repository": "https://github.com/mkostromin-sigma/salesagent-code-review-chris"
 }

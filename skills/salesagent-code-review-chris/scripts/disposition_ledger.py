@@ -9,7 +9,7 @@ the failure — DISPOSITION was: a finding with no resolved next-action gets dro
 "optional / non-gating" is the banned label that launders the drop (`review-charter.md` §1.8,
 §3, §4b.5). ``make quality`` is green either way; nothing mechanical catches a dropped finding.
 
-This detector reads a consolidation artifact (a `.cursor/reports/code-review-chris-*.md`, or any
+This detector reads a consolidation artifact (a `.cursor/reports/salesagent-code-review-chris-*.md`, or any
 review write-up) and checks the OUTPUT contract the charter already mandates in prose:
 
   1. LEDGER-PRESENT   — an Actions ledger section exists (§4b.5): every finding ends in a
@@ -24,7 +24,7 @@ This is a WORKLIST, not a verdict (like recovery_audit): the counts are heuristi
 banned words can legitimately appear when QUOTING an external reviewer. The human adjudicates
 each hit — the point is that a dropped finding stops being SILENT. It does NOT judge whether a
 finding is correct or well-unified; cross-agent unification is the T3 synthesis step (a
-judgment pass in `/code-review-chris` Step 5), which this detector deliberately does not attempt.
+judgment pass in `/salesagent-code-review-chris` Step 5), which this detector deliberately does not attempt.
 
   4. SITE-DROP (``--notes``) — the second failure channel, from PR #1534. The consolidation notes
      enumerated a THIRD duplication site (``media_buy_create.py:4207``); the SSOT-synthesis pass
@@ -50,7 +50,7 @@ judgment pass in `/code-review-chris` Step 5), which this detector deliberately 
      label. The banned-disposition check (#3) covers §1.8; this covers §1.9.
 
 Usage:
-  python3 disposition_ledger.py [report.md]                 # audit a report (default: newest *code-review-chris*.md)
+  python3 disposition_ledger.py [report.md]                 # audit a report (default: newest *salesagent-code-review-chris*.md)
   python3 disposition_ledger.py report.md --notes notes.md  # + cross-check notes→artifact site drop
   python3 disposition_ledger.py --selftest                  # prove the audit logic on synthetic reports
 
@@ -229,7 +229,7 @@ def selftest() -> int:
 
 def _newest_report() -> Path | None:
     root = Path.cwd() / ".cursor" / "reports"
-    reports = sorted(root.glob("*code-review-chris*.md"), key=lambda p: p.stat().st_mtime, reverse=True)
+    reports = sorted(root.glob("*salesagent-code-review-chris*.md"), key=lambda p: p.stat().st_mtime, reverse=True)
     return reports[0] if reports else None
 
 
@@ -243,7 +243,7 @@ def main(argv: list[str]) -> int:
     args = [a for a in argv if not a.startswith("-") and a != notes_path]
     target = Path(args[0]) if args else _newest_report()
     if target is None:
-        print("ERROR: no report path given and no .cursor/reports/code-review-chris-*.md found "
+        print("ERROR: no report path given and no .cursor/reports/salesagent-code-review-chris-*.md found "
               "(run from salesagent repo root).", file=sys.stderr)
         return 2
     try:

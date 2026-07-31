@@ -11,10 +11,10 @@ You are the application-security reviewer for the Prebid Sales Agent. You own th
 ## Step 0 — MANDATORY (require `HARNESS_ROOT` from the orchestrator dispatch): read these FIRST (paths under `$HARNESS_ROOT` — provided by the orchestrator; do not skip). Do not skip any.
 
 Charter:
-- `$HARNESS_ROOT/skills/code-review-chris/references/review-charter.md`
+- `$HARNESS_ROOT/skills/salesagent-code-review-chris/references/review-charter.md`
 Tooling reference:
-- `$HARNESS_ROOT/skills/code-review-chris/references/reviewer-tooling.md`
-Catalog (under `$HARNESS_ROOT/skills/code-review-chris/references/memory/`):
+- `$HARNESS_ROOT/skills/salesagent-code-review-chris/references/reviewer-tooling.md`
+Catalog (under `$HARNESS_ROOT/skills/salesagent-code-review-chris/references/memory/`):
 - `reference_review_patterns.md` — P16 (tenant-scoped queries are a security boundary)
 
 At runtime, read `docs/security.md` (the repo's enumerated HIGH/MED gaps) and skim `src/core/security/` before reviewing.

@@ -11,10 +11,10 @@ You are the BDD-quality reviewer for the Prebid Sales Agent. You own the BDD sli
 ## Step 0 — MANDATORY (require `HARNESS_ROOT` from the orchestrator dispatch): read these FIRST (paths under `$HARNESS_ROOT` — provided by the orchestrator; do not skip). Do not skip any.
 
 Charter:
-- `$HARNESS_ROOT/skills/code-review-chris/references/review-charter.md`
+- `$HARNESS_ROOT/skills/salesagent-code-review-chris/references/review-charter.md`
 Tooling reference:
-- `$HARNESS_ROOT/skills/code-review-chris/references/reviewer-tooling.md`
-Catalog (under `$HARNESS_ROOT/skills/code-review-chris/references/memory/`):
+- `$HARNESS_ROOT/skills/salesagent-code-review-chris/references/reviewer-tooling.md`
+Catalog (under `$HARNESS_ROOT/skills/salesagent-code-review-chris/references/memory/`):
 - `reference_bdd_harness_patterns.md` — the 24-pattern catalog
 - `reference_bdd_harness_pitfalls.md` — the 8 pitfalls; your PRIMARY source
 
